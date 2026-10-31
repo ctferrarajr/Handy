@@ -45,14 +45,23 @@ const PRONOUN_I: &[&str] = &["i", "i'm", "i'll", "i've", "i'd", "i’m", "i’ll
 ///
 /// Words are only ever capitalized, never lowercased, so names and acronyms the
 /// model got right stay as they are.
-pub fn format_dictation(text: &str) -> String {
+pub fn format_dictation(text: &str, spoken_punctuation: bool, capitalization: bool) -> String {
+    if !spoken_punctuation && !capitalization {
+        return text.to_string();
+    }
+
     let tokens: Vec<&str> = text.split_whitespace().collect();
     let mut out = String::new();
     let mut at_sentence_start = true;
     let mut i = 0;
 
     while i < tokens.len() {
-        if let Some((command, used)) = parse_command(&tokens, i) {
+        let command = if spoken_punctuation {
+            parse_command(&tokens, i)
+        } else {
+            None
+        };
+        if let Some((command, used)) = command {
             match command {
                 Command::Break(separator) => {
                     out.push_str(separator);
@@ -76,11 +85,15 @@ pub fn format_dictation(text: &str) -> String {
         if !out.is_empty() && !out.ends_with('\n') {
             out.push(' ');
         }
-        let word = fix_pronoun_i(tokens[i]);
-        if at_sentence_start {
-            out.push_str(&capitalize_word(&word));
+        if capitalization {
+            let word = fix_pronoun_i(tokens[i]);
+            if at_sentence_start {
+                out.push_str(&capitalize_word(&word));
+            } else {
+                out.push_str(&word);
+            }
         } else {
-            out.push_str(&word);
+            out.push_str(tokens[i]);
         }
         at_sentence_start = ends_sentence(tokens[i]);
         i += 1;
@@ -206,7 +219,31 @@ mod tests {
 
     #[track_caller]
     fn check(input: &str, expected: &str) {
-        assert_eq!(format_dictation(input), expected);
+        assert_eq!(format_dictation(input, true, true), expected);
+    }
+
+    #[test]
+    fn spoken_punctuation_can_run_alone() {
+        assert_eq!(
+            format_dictation("hello comma i said period then stop", true, false),
+            "hello, i said. then stop"
+        );
+    }
+
+    #[test]
+    fn capitalization_can_run_alone() {
+        assert_eq!(
+            format_dictation("hello comma i said. then stop", false, true),
+            "Hello comma I said. Then stop"
+        );
+    }
+
+    #[test]
+    fn both_off_leaves_text_unchanged() {
+        assert_eq!(
+            format_dictation("hello comma  i said period", false, false),
+            "hello comma  i said period"
+        );
     }
 
     #[test]
