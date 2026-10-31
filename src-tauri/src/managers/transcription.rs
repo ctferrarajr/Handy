@@ -1,5 +1,5 @@
 use crate::audio_toolkit::{
-    apply_custom_words, detect_output_language, normalize_transcription_output,
+    apply_custom_words, detect_output_language, format_dictation, normalize_transcription_output,
     remove_filler_words, OutputLanguageEvidence,
 };
 use crate::chinese_script::{convert_chinese_script, ChineseVariety};
@@ -1826,7 +1826,17 @@ fn post_process_transcription_text(
             settings.filler_word_removal_enabled,
         );
 
-        normalize_transcription_output(&without_fillers)
+        let normalized = normalize_transcription_output(&without_fillers);
+
+        // The dictation rules only understand English words.
+        let is_english = output_language.language().map_or(true, |language| {
+            language.split(&['-', '_'][..]).next() == Some("en")
+        });
+        if is_english {
+            format_dictation(&normalized)
+        } else {
+            normalized
+        }
     })
 }
 
