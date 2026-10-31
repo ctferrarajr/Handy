@@ -16,6 +16,7 @@
     "postProcessing": "Post Process",
     "history": "History",
     "debug": "Debug",
+    "custom": "Custom",
     "about": "About"
   },
   "onboarding": {
@@ -155,6 +156,17 @@
     }
   },
   "settings": {
+    "custom": {
+      "title": "Custom",
+      "spokenPunctuation": {
+        "title": "Spoken Punctuation",
+        "description": "Turns words like comma, period, question mark, and new line into the real thing. English only."
+      },
+      "smartCapitalization": {
+        "title": "Smart Capitalization",
+        "description": "Capitalizes the start of each sentence and the word I. English only."
+      }
+    },
     "modelSettings": {
       "title": "{{model}} Settings"
     },
