@@ -502,6 +502,10 @@ pub struct AppSettings {
     pub filler_word_removal_enabled: bool,
     #[serde(default)]
     pub custom_filler_words: Option<Vec<String>>,
+    #[serde(default = "default_dictation_rule_enabled")]
+    pub spoken_punctuation_enabled: bool,
+    #[serde(default = "default_dictation_rule_enabled")]
+    pub smart_capitalization_enabled: bool,
     /// Fresh installs default from the OS locale; existing stores are migrated
     /// in `apply_settings_migrations`.
     #[serde(default)]
@@ -598,6 +602,10 @@ fn default_vad_enabled() -> bool {
 }
 
 fn default_filler_word_removal_enabled() -> bool {
+    true
+}
+
+fn default_dictation_rule_enabled() -> bool {
     true
 }
 
@@ -985,6 +993,8 @@ pub fn get_default_settings() -> AppSettings {
         external_script_path: None,
         filler_word_removal_enabled: default_filler_word_removal_enabled(),
         custom_filler_words: None,
+        spoken_punctuation_enabled: default_dictation_rule_enabled(),
+        smart_capitalization_enabled: default_dictation_rule_enabled(),
         chinese_script: default_chinese_script(),
         transcribe_accelerator: TranscribeAcceleratorSetting::default(),
         ort_accelerator: OrtAcceleratorSetting::default(),
