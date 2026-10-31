@@ -1833,7 +1833,11 @@ fn post_process_transcription_text(
             language.split(&['-', '_'][..]).next() == Some("en")
         });
         if is_english {
-            format_dictation(&normalized)
+            format_dictation(
+                &normalized,
+                settings.spoken_punctuation_enabled,
+                settings.smart_capitalization_enabled,
+            )
         } else {
             normalized
         }
