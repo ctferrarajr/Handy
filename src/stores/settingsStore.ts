@@ -183,6 +183,10 @@ const settingUpdaters: {
   },
   filler_word_removal_enabled: (value) =>
     commands.changeFillerWordRemovalEnabledSetting(value as boolean),
+  spoken_punctuation_enabled: (value) =>
+    commands.changeSpokenPunctuationEnabledSetting(value as boolean),
+  smart_capitalization_enabled: (value) =>
+    commands.changeSmartCapitalizationEnabledSetting(value as boolean),
   chinese_script: (value) =>
     commands.changeChineseScriptSetting(value as ChineseScript),
   show_tray_icon: (value) =>
